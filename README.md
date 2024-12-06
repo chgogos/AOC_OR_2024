@@ -1,7 +1,7 @@
 # AOC_OR_2024
 Advent of OperationsResearch 2024, organized by [Borja Menendez Moreno](https://feasible.substack.com/)
 
-* Day1
+* [Day1](./day1/README.md)
 * Day2
 * Day3
 * Day4
