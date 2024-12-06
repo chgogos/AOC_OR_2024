@@ -1,4 +1,5 @@
 from ortools.sat.python import cp_model
+from ortools.linear_solver import pywraplp
 
 class Problem:
     def __init__(self, fn):
@@ -56,6 +57,7 @@ def model_cpsat(prob:Problem):
 
     solver = cp_model.CpSolver()
     solver.parameters.log_search_progress = True
+    solver.parameters.max_time_in_seconds = 5*60
     
     print('solving...')
     status = solver.Solve(model)
@@ -69,9 +71,50 @@ def model_cpsat(prob:Problem):
         print('No solution found.')
         print(f'Status: {solver.StatusName(status)}')
 
-'''
-#15     90.12s best:188   next:[186,186]  pseudo_costs (fixed_bools=1/46220)
-# '''
+
+# ----
+# --------------------------
+def model_mip(prob:Problem):
+
+    # solver = pywraplp.Solver.CreateSolver('SCIP')
+    # solver = pywraplp.Solver.CreateSolver('CPLEX')
+    solver = pywraplp.Solver.CreateSolver('CBC')
+
+    x = {}
+    for i in range(prob.possibilities):
+        x[i] = solver.BoolVar(f'x_{i}')
+
+    for i in range(prob.segments):
+        x_list = []
+        for j, (c, seg_list) in enumerate(prob.cost_segments):
+            if i+1 in seg_list:
+                x_list.append(x[j])
+
+        if len(x_list) == 0:
+            print(f'no x_list for segment={i+1}')
+            exit(0)
+
+        solver.Add(sum(x_list) >= 1)
+
+    obj = solver.IntVar(0, 1_000_000, "obj")
+    solver.Add(obj == sum(c * x[i] for i in range(prob.possibilities)))
+
+    solver.Minimize(obj)
+
+    print('solving...')
+    solver.EnableOutput()
+    solver.SetTimeLimit(5*60*1000) # 5 minutes
+
+    status = solver.Solve()
+
+    if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
+        print(f'status: {status}')
+        print(f'obj={int(solver.Objective().Value()):,}')
+        # print(f'time={solver.WallTime():.1f}')
+    else:
+        print('No solution found.')
+        print(f'status: {status}')
+
 
 if __name__ == "__main__":
     prob = Problem("day6/instance.txt")
@@ -81,3 +124,21 @@ if __name__ == "__main__":
     # print(prob.cost_segments[-1])
 
     model_cpsat(prob)
+    # model_mip(prob)
+
+
+'''
+--- CP_SAT ---
+#15     90.12s best:188   next:[186,186]  pseudo_costs (fixed_bools=1/46220)
+
+--- CBC ---
+Objective value:                188.00000000
+Lower bound:                    184.713
+Gap:                            0.02
+Enumerated nodes:               3195
+Total iterations:               776929
+Time (CPU seconds):             299.75
+Time (Wallclock seconds):       299.74
+
+Total time (CPU seconds):       299.76   (Wallclock seconds):       299.76
+# '''
