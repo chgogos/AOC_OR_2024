@@ -43,7 +43,7 @@ def model_cpsat(prob:Problem):
         for j, (c, seg_list) in enumerate(prob.cost_segments):
             if i+1 in seg_list:
                 x_list.append(x[j])
-        
+
         if len(x_list) == 0:
             print(f'no x_list for segment={i+1}')
             exit(0)
@@ -51,19 +51,19 @@ def model_cpsat(prob:Problem):
         model.add(sum(x_list) >= 1)
 
     obj = model.NewIntVar(0, 1_000_000, "obj")
-    model.add(obj == sum(c * x[i] for i in range(prob.possibilities)))
+    model.add(obj == sum(c * x[i] for i,(c,_) in enumerate(prob.cost_segments)))
 
     model.minimize(obj)
 
     solver = cp_model.CpSolver()
     solver.parameters.log_search_progress = True
     solver.parameters.max_time_in_seconds = 5*60
-    
+
     print('solving...')
     status = solver.Solve(model)
 
     if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-        print(f'status: {solver.StatusName(status)}') 
+        print(f'status: {solver.StatusName(status)}')
         print(f'obj={int(solver.ObjectiveValue()):,}')
         print(f'bound={int(solver.BestObjectiveBound()):,}')
         print(f'time={solver.WallTime():.1f}')
@@ -97,7 +97,7 @@ def model_mip(prob:Problem):
         solver.Add(sum(x_list) >= 1)
 
     obj = solver.IntVar(0, 1_000_000, "obj")
-    solver.Add(obj == sum(c * x[i] for i in range(prob.possibilities)))
+    solver.Add(obj == sum(c * x[i] for i,(c,_) in enumerate(prob.cost_segments)))
 
     solver.Minimize(obj)
 
@@ -129,16 +129,17 @@ if __name__ == "__main__":
 
 '''
 --- CP_SAT ---
-#15     90.12s best:188   next:[186,186]  pseudo_costs (fixed_bools=1/46220)
+#13    186.88s best:169   next:[167,168]  pseudo_costs (fixed_bools=1/46662)
+#Bound 272.70s best:169   next:[168,168]
 
 --- CBC ---
-Objective value:                188.00000000
-Lower bound:                    184.713
-Gap:                            0.02
-Enumerated nodes:               3195
-Total iterations:               776929
-Time (CPU seconds):             299.75
-Time (Wallclock seconds):       299.74
+Objective value:                169.00000000
+Lower bound:                    166.784
+Gap:                            0.01
+Enumerated nodes:               5185
+Total iterations:               1064724
+Time (CPU seconds):             299.99
+Time (Wallclock seconds):       299.99
 
-Total time (CPU seconds):       299.76   (Wallclock seconds):       299.76
+Total time (CPU seconds):       300.00   (Wallclock seconds):       300.00
 # '''
