@@ -6,7 +6,7 @@ Advent of OperationsResearch 2024, organized by [Borja Menendez Moreno](https://
 * Day3
 * Day4
 * [Day5](./day5/README.md)
-* Day6
+* [Day6](./day6/README.md)
 
 ---
-[Christos Gogos](https://www.linkedin.com/in/christos-gogos-07a75bb/)
+[Christos Gogos](https://www.linkedin.com/in/christos-gogos-07a75bb/) & Christos Valouxis
