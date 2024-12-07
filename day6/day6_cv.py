@@ -26,7 +26,7 @@ class Problem:
         
             items = line.split()
             c = int(items[0])
-            self.cost_segments.append((c, [int(x) for x in items[1:]]))
+            self.cost_segments.append((c, [int(x) for x in items[2:]]))
 
 # ----
 # ----------------------------
@@ -123,23 +123,10 @@ if __name__ == "__main__":
     # print(prob.cost_segments[0])
     # print(prob.cost_segments[-1])
 
-    model_cpsat(prob)
-    # model_mip(prob)
+    # model_cpsat(prob)
+    model_mip(prob)
 
 
 '''
---- CP_SAT ---
-#13    186.88s best:169   next:[167,168]  pseudo_costs (fixed_bools=1/46662)
-#Bound 272.70s best:169   next:[168,168]
-
---- CBC ---
-Objective value:                169.00000000
-Lower bound:                    166.784
-Gap:                            0.01
-Enumerated nodes:               5185
-Total iterations:               1064724
-Time (CPU seconds):             299.99
-Time (Wallclock seconds):       299.99
-
-Total time (CPU seconds):       300.00   (Wallclock seconds):       300.00
+...
 # '''
