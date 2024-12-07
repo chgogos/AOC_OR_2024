@@ -1,39 +1,27 @@
+import os
+import logging
 from ortools.linear_solver import pywraplp
 
 
 def main(costs):
-    # Data
-    # costs = [
-    #     [90, 80, 75, 70],
-    #     [35, 85, 55, 65],
-    #     [125, 95, 90, 95],
-    #     [45, 110, 95, 115],
-    #     [50, 100, 90, 100],
-    # ]
     num_workers = len(costs)
     num_tasks = len(costs[0])
 
-    # Solver
-    # Create the mip solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver("SCIP")
-
     if not solver:
         return
 
-    # Variables
-    # x[i, j] is an array of 0-1 variables, which will be 1
-    # if worker i is assigned to task j.
+    # x[i, j] will be 1 if worker i is assigned to task j.
     x = {}
     for i in range(num_workers):
         for j in range(num_tasks):
             x[i, j] = solver.IntVar(0, 1, "")
 
-    # Constraints
-    # Each worker is assigned to at most 1 task.
+    # Constraint1: Each worker is assigned to at most 1 task.
     for i in range(num_workers):
         solver.Add(solver.Sum([x[i, j] for j in range(num_tasks)]) <= 1)
 
-    # Each task is assigned to exactly one worker.
+    # Constraint2: Each task is assigned to exactly one worker.
     for j in range(num_tasks):
         solver.Add(solver.Sum([x[i, j] for i in range(num_workers)]) == 1)
 
@@ -45,48 +33,48 @@ def main(costs):
     solver.Minimize(solver.Sum(objective_terms))
 
     # Solve
-    print(f"Solving with {solver.SolverVersion()}")
+    logging.info(f"Solving with {solver.SolverVersion()}")
+    solver.EnableOutput()
     status = solver.Solve()
 
-    # Print solution.
     if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
-        print(f"Total cost = {solver.Objective().Value()}\n")
+        logging.info(f"Total cost = {solver.Objective().Value()}\n")
         for i in range(num_workers):
             for j in range(num_tasks):
-                # Test if x[i,j] is 1 (with tolerance for floating point arithmetic).
-                if x[i, j].solution_value() > 0.5:
-                    print(f"Worker {i} assigned to task {j}." + f" Cost: {costs[i][j]}")
+                if x[i, j].solution_value() > 0.5: # tolerance for floating point arithmetic
+                    logging.info(f"Worker {i} assigned to task {j}." + f" Cost: {costs[i][j]}")
     else:
-        print("No solution found.")
+        logging.info("No solution found.")
 
 
 def read_data(input_file):
     costs = []
-    first_line=True
-    k=0
+    first_line = True
+    k = 0
     cost_line = []
-    with  open(input_file, "r") as f:
+    with open(input_file, "r") as f:
         for line in f:
-            if line[0]=="#": continue
-            if line.strip() == "": continue
+            if line[0] == "#":
+                continue
+            if line.strip() == "":
+                continue
             if first_line:
                 number_of_workers = int(line)
                 first_line = False
                 continue
             for x in line.split():
                 cost_line.append(int(x))
-                k+=1
+                k += 1
                 if k == number_of_workers:
                     costs.append(cost_line)
-                    cost_line=[]
-                    k=0
+                    cost_line = []
+                    k = 0
     return costs
 
 
-            
-
-
 if __name__ == "__main__":
-    costs = read_data("instance.txt")
-    # print(costs)
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    fn = os.path.join(os.path.dirname(__file__), "instance.txt")
+    costs = read_data(fn)
+    logging.debug(costs)
     main(costs)
