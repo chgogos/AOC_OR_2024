@@ -17,6 +17,10 @@ class Problem:
         assert self.number_of_possibilities == len(self.possibilities)
         logging.info(f"# segments = {self.number_of_segments}")
         logging.info(f"# possibilities = {self.number_of_possibilities}")
+        for i, (cost, possibility) in enumerate(self.possibilities):
+            if i >= 20 and i <= self.number_of_possibilities - 20:
+                continue
+            logging.info(f"Possibility index={i}, cost={cost}, segments={possibility}")
 
 
 def read_problem_data(fn):
@@ -36,13 +40,13 @@ def read_problem_data(fn):
                 continue
             if file_section == "B":
                 v = line.split()
-                a_problem.add_possibility(int(v[0]), [int(x) for x in v[1:]])
+                a_problem.add_possibility(int(v[0]), [int(x) for x in v[2:]])
     return a_problem
 
 
 def solve(a_problem, time_limit=600):
     model = cp_model.CpModel()
-    
+
     # decision variables
     x = {}
     for i in range(a_problem.number_of_possibilities):
@@ -67,18 +71,18 @@ def solve(a_problem, time_limit=600):
     solver.parameters.log_search_progress = True
     solver.parameters.max_time_in_seconds = time_limit
     status = solver.solve(model)
-    
+
     if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-        print(f'status: {solver.StatusName(status)}') 
-        print(f'obj={int(solver.ObjectiveValue()):,}')
-        print(f'bound={int(solver.BestObjectiveBound()):,}')
-        print(f'time={solver.WallTime():.1f}')
+        print(f"status: {solver.StatusName(status)}")
+        print(f"obj={int(solver.ObjectiveValue()):,}")
+        print(f"bound={int(solver.BestObjectiveBound()):,}")
+        print(f"time={solver.WallTime():.1f}")
         for i in range(a_problem.number_of_possibilities):
             if solver.value(x[i]) == 1:
                 logging.info(f"Selected possibility {i} : {a_problem.possibilities[i]}")
     else:
-        print('No solution found.')
-        print(f'Status: {solver.StatusName(status)}')
+        print("No solution found.")
+        print(f"Status: {solver.StatusName(status)}")
 
 
 if __name__ == "__main__":
@@ -87,4 +91,4 @@ if __name__ == "__main__":
     fn = os.path.join(os.path.dirname(__file__), "instance.txt")
     a_problem = read_problem_data(fn)
     a_problem.display_info()
-    solve(a_problem, time_limit=1200)
+    solve(a_problem, time_limit=600)
