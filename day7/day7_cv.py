@@ -132,7 +132,7 @@ def model_mip(prob:Problem):
 
 
 if __name__ == "__main__":
-    prob = Problem("day6/instance_day7.txt")
+    prob = Problem("day7/instance.txt")
 
     # print(prob.segments, prob.possibilities)
     # print(prob.cost_segments[0])
