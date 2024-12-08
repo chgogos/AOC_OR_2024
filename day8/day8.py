@@ -72,7 +72,7 @@ def solve(a_problem, time_limit=600, max_bins=None):
 
     # decision variables
     N = len(a_problem.items)
-    if max_bins is not None:
+    if max_bins is None:
         max_bins = N
 
     x = {}
@@ -142,7 +142,7 @@ def solve_all():
     c = 0
     for a_problem in read_problem_data(fn):
         a_problem.display_info()
-        num_bins = solve(a_problem, time_limit=60)
+        num_bins = solve(a_problem, time_limit=120)
         if num_bins == a_problem.best_known_number_of_bins:
             c += 1
         out += f"{a_problem.problem_name}, bins = {num_bins}, optimal bins = {a_problem.best_known_number_of_bins} {"(*)" if num_bins == a_problem.best_known_number_of_bins else ""}\n"

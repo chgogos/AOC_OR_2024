@@ -34,6 +34,7 @@ Can you help me solve this problem?
 
 ## Output
 ```
+SCIP 60sec
 u120_00, bins_needed = 49, optimal bins = 48
 u120_01, bins_needed = 51, optimal bins = 49
 u120_02, bins_needed = 47, optimal bins = 46
