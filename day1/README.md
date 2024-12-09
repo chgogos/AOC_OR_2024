@@ -17,6 +17,9 @@ Can you help me solve this problem?
 
 [instance.txt](./instance.txt)
 
+## Notes
+Graph Coloring Problem
+
 ## Solution 
 
 [day1.py](./day1.py)

@@ -63,9 +63,9 @@ def read_problem_data(fn):
 
 
 def solve(a_problem, time_limit=600, max_bins=None):
-    # solver_engine = "SCIP"
+    solver_engine = "SCIP"
     # solver_engine = "CPLEX"
-    solver_engine = "CBC"
+    # solver_engine = "CBC"
     solver = pywraplp.Solver.CreateSolver(solver_engine)
     if not solver:
         return
@@ -152,5 +152,5 @@ def solve_all():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format="%(message)s")
-    # solve_single()
-    solve_all()
+    solve_single()
+    # solve_all()
