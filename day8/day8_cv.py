@@ -7,6 +7,10 @@ instance: u120_00
     time=149.6
     47 bins, No solution found.
     Status: INFEASIBLE, walltime: 0.810061
+    --- (with objective)
+    status: OPTIMAL
+    objective: 48
+    walltime: 309.059
 
 --- CBC ---
 
@@ -17,7 +21,14 @@ instance: u120_00
     Solving Time (sec) : 266.00
     47 bins, SCIP Status        : problem is solved [infeasible]
     Solving Time (sec) : 0.00
-# '''
+    --- (with objective)
+    SCIP Status        : solving was interrupted [time limit reached]
+    Solving Time (sec) : 600.00
+    Primal Bound       : +1.00000000000000e+20 (0 solutions)
+    Dual Bound         : +4.80000000000000e+01
+    Gap                : infinite
+    No solution found.
+'''
 from ortools.sat.python import cp_model
 from ortools.linear_solver import pywraplp
 
@@ -60,12 +71,20 @@ def model_cpsat(prob:Problem):
         for j in range(prob.max_bins):
             x[i,j] = model.new_bool_var(f'x_{i}_{j}')
 
+    y = {}
+    for i in range(prob.max_bins):
+        y[i] = model.new_bool_var(f'y_{i}')
+
     for i in range(prob.num_items):
         model.add(sum(x[i,j] for j in range(prob.max_bins)) == 1)
 
     for j in range(prob.max_bins):
         model.add(sum(prob.sizes[i] * x[i,j]
-                    for i in range(prob.num_items)) <= prob.capacity)
+                    for i in range(prob.num_items)) <= y[j] * prob.capacity)
+
+    obj = model.new_int_var(0, prob.max_bins, 'obj')
+    obj = sum([y[j] for j in range(prob.max_bins)])
+    model.minimize(obj)
 
     solver = cp_model.CpSolver()
     solver.parameters.log_search_progress = True
@@ -74,9 +93,10 @@ def model_cpsat(prob:Problem):
     print('solving...')
     status = solver.Solve(model)
 
-    if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+    if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
         print(f'status: {solver.StatusName(status)}')
         print(f'time={solver.WallTime():.1f}')
+        print(f'obj={int(solver.objective_value())}')
     else:
         print('No solution found.')
         print(f'Status: {solver.StatusName(status)}')
@@ -95,22 +115,31 @@ def model_mip(prob:Problem):
         for j in range(prob.max_bins):
             x[i,j] = solver.BoolVar(f'x_{i}')
 
+    y = {}
+    for i in range(prob.max_bins):
+        y[i] = solver.BoolVar(f'y_{i}')
+
     for i in range(prob.num_items):
         solver.Add(sum(x[i,j] for j in range(prob.max_bins)) == 1)
 
     for j in range(prob.max_bins):
         solver.Add(sum(prob.sizes[i] * x[i,j]
-                    for i in range(prob.num_items)) <= prob.capacity)
-    print('solving...')
-    solver.EnableOutput()
-    solver.SetTimeLimit(5*60*1000) # 5 minutes
+                    for i in range(prob.num_items)) <= y[j] * prob.capacity)
 
+    obj = solver.IntVar(0, prob.max_bins, 'obj')
+    obj = sum([y[j] for j in range(prob.max_bins)])
+    solver.Minimize(obj)
+
+    solver.EnableOutput()
+    solver.SetTimeLimit(10*60*1000) # 10 minutes
+
+    print(f"solving with {solver.SolverVersion()}...")
     status = solver.Solve()
 
-    if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
+    if status in [pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE]:
         print(f'status: {status}')
-        # print(f'obj={int(solver.Objective().Value()):,}')
-        # print(f'time={solver.WallTime():.1f}')
+        print(f'obj={int(solver.Objective().Value()):,}')
+        print(f'time={solver.WallTime():.1f}')
     else:
         print('No solution found.')
         print(f'status: {status}')
@@ -126,6 +155,9 @@ if __name__ == "__main__":
     # print(prob.sizes[-2])
     # print(prob.sizes[-1])
 
-    prob.max_bins = 47
-    model_cpsat(prob)
+    # do binary search to find best value for max_bins
+    # try max_bins = 120, 60, 30, 45, 52, 48 (47)
+    # prob.max_bins = ...
+    # model_cpsat(prob)
+    
     # model_mip(prob)
