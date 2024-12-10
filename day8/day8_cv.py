@@ -156,6 +156,9 @@ if __name__ == "__main__":
     # print(prob.sizes[-1])
 
     # do binary search to find best value for max_bins
+    # between upper and lower bound
+    # upper bound = prob.num_items
+    # lower bound = sum(prob.sizes) // prob.capacity + 1
     # try max_bins = 120, 60, 30, 45, 52, 48 (47)
     # prob.max_bins = ...
     # model_cpsat(prob)

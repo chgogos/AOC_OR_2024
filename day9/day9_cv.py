@@ -4,6 +4,9 @@
 from ortools.sat.python import cp_model
 from ortools.linear_solver import pywraplp
 
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
 class Problem:
     def __init__(self, fn):
 
@@ -75,28 +78,94 @@ def model_cpsat(prob:Problem):
                 [x_ivar[i,j] for i in range(num_items)],
                 [y_ivar[i,j] for i in range(num_items)])
 
-    # model.minimize(obj)
+    # b[j] = 1 if object j is used
+    b = {}
+    for j in range(num_objs):
+        b[j] = model.new_bool_var(f'b_{j}')
+        for i in range(num_items):
+            model.add(b[j] >= isp_var[i, j])
+
+    # obj = total objects
+    obj = model.new_int_var(0, num_objs, 'obj')
+    model.add(obj == sum(b[j] for j in range(num_objs)))
+
+    # symmetry (???)
+    for j in range(num_objs-1):
+        model.add(b[j] >= b[j+1])
+
+    # minimize total used objects
+    model.minimize(obj)
 
     solver = cp_model.CpSolver()
-    # solver.parameters.log_search_progress = True
-    solver.parameters.max_time_in_seconds = 5*60
+    solver.parameters.log_search_progress = True
+    solver.parameters.max_time_in_seconds = 2*60
 
     print('solving...')
     status = solver.Solve(model)
 
     if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
         print(f'status: {solver.StatusName(status)}')
-        # print(f'obj={int(solver.ObjectiveValue()):,}')
-        # print(f'bound={int(solver.BestObjectiveBound()):,}')
+        print(f'obj={int(solver.ObjectiveValue())}')
+        print(f'bound={int(solver.BestObjectiveBound())}')
         print(f'time={solver.WallTime():.1f}')
 
         for j in range(num_objs):
             k = prob.index_of_object(j)
+            area = prob.objects[k][0] * prob.objects[k][1]
+            iarea, titems = 0, 0
             print(f'obj={j+1} x={prob.objects[k][0]} y={prob.objects[k][1]}')
             for i in range(num_items):
                 if solver.BooleanValue(isp_var[i,j]):
                     print(f'{i} {prob.items[i]},', end='')
-            print()
+                    iarea += prob.items[i][0] * prob.items[i][1]
+                    titems += 1
+            print(f'\nitems={titems:2d} area={area} / {iarea} = {100*iarea/area:.1f}%')
+
+
+        # Create a figure and axes
+        # fig, ax = plt.subplots(num_objs//2)#(figsize=(6,6))#(prob.objects[k][0], prob.objects[k][1]))
+        fig, ax = plt.subplots(num_objs, 1, figsize=(10, 2 * num_objs))
+        for j in range(num_objs):
+            k = prob.index_of_object(j)
+
+            ax[j].set_xlim(0, prob.objects[k][0])
+            ax[j].set_ylim(0, prob.objects[k][1])
+            # ax[j].set_aspect('equal')
+            ax[j].set_title(f"Sheet {k+1} ({prob.objects[k][0]}x{prob.objects[k][0]})",
+                                fontsize=10)
+            ax[j].set_xlabel("Width")
+            ax[j].set_ylabel("Height")
+
+            # Add sheet rectangle
+            ax[j].add_patch(
+                patches.Rectangle(
+                    (0, 0), prob.objects[k][0], prob.objects[k][1],
+                    edgecolor="black", fill=False, linewidth=2
+                )
+            )
+
+            # Add items
+            for i in range(num_items):
+                if solver.BooleanValue(isp_var[i,j]):
+                    x, y = solver.Value(x_var[i,j]), solver.Value(y_var[i,j])
+                    w, h = prob.items[i][0], prob.items[i][1]
+                    rect = patches.Rectangle((x,y), w, h,
+                                        # linewidth=1,
+                                        edgecolor='r', facecolor='green', alpha=0.6)
+                    ax[j].add_patch(rect)
+
+                    ax[j].text(x + w / 2, y + h / 2,
+                            f"{i}", ha="center", va="center", fontsize=8, color="black")
+
+            # Set axis limits
+            ax[j].set_xlim(0, prob.objects[k][0])
+            ax[j].set_ylim(0, prob.objects[k][1])
+
+        # Display the plot
+        # plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
     else:
         print('No solution found.')
         print(f'Status: {solver.StatusName(status)}')
@@ -136,7 +205,7 @@ def model_mip(prob:Problem):
 
     status = solver.Solve()
 
-    if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
+    if status in [pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE]:
         print(f'status: {status}')
         print(f'obj={int(solver.Objective().Value()):,}')
         # print(f'time={solver.WallTime():.1f}')
@@ -144,7 +213,7 @@ def model_mip(prob:Problem):
         print('No solution found.')
         print(f'status: {status}')
 
-
+# ------------------------
 if __name__ == "__main__":
     prob = Problem("day9/m1a.txt")
 

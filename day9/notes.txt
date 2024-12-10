@@ -1,0 +1,7 @@
+
+https://yetanothermathprogrammingconsultant.blogspot.com/2021/02/2d-bin-packing-with-google-or-tools-cp.html
+2d bin packing with Google OR-Tools CP-SAT, how to fix?
+
+https://yetanothermathprogrammingconsultant.blogspot.com/2021/02/2d-bin-packing.html
+2d Bin Packing, mip models
+
