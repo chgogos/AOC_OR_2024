@@ -140,5 +140,5 @@ if __name__ == "__main__":
     # print(prob.cost_segments[-2])
     # print(prob.cost_segments[-1])
 
-    # model_cpsat(prob)
-    model_mip(prob)
+    model_cpsat(prob)
+    # model_mip(prob)
