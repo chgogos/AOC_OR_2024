@@ -24,6 +24,11 @@ PS: how would you handle irregularly shaped items?
 
 ## Notes
 
+* <https://people.brunel.ac.uk/~mastjjb/jeb/orlib/binpacktwoinfo.html>
+* <https://ampl.com/mo-book/notebooks/03/strip-packing.html>
+* [CPSAT-addnooverlap2d](https://developers.google.com/optimization/reference/python/sat/python/cp_model#addnooverlap2d)
+* <https://yetanothermathprogrammingconsultant.blogspot.com/2021/02/2d-bin-packing-with-google-or-tools-cp.html>
+
 
 ## Solution
 
