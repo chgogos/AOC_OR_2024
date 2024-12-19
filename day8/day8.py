@@ -152,5 +152,5 @@ def solve_all():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format="%(message)s")
-    solve_single()
-    # solve_all()
+    # solve_single()
+    solve_all()
