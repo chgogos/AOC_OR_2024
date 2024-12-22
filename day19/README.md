@@ -1,6 +1,5 @@
-# Day 19 - Assembling
+# Day 19 - assembling
 
-## Description
 Today I'm the Operations Manager in the manufacturing line at fORd 🚗, where every car:
 
 Goes through painting 🎨,
@@ -24,7 +23,10 @@ Reduces machine downtime 🛑
 Improves customer satisfaction 🙌
 Can you help me solve this problem? 🧩
 
-Let’s get these cars rolling smoothly! 🚙
+Let’s get these cars rolling smoothly! 🚙 
+
+
+## Description
 
 
 ## Problem's data
