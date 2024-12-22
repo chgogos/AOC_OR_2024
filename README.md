@@ -18,7 +18,7 @@ Advent of OperationsResearch 2024, organized by [Borja Menendez Moreno](https://
 * Day 15
 * [Day 16](./day16/README.md) OPTIMAL COST = 2949
 * Day 17
-* [Day 18](./day18/README.md) COST = 89
+* [Day 18](./day18/README.md) OPTIMAL COST = 82
 * Day 19
 * Day 20
 * Day 21

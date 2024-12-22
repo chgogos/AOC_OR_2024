@@ -32,7 +32,8 @@ PS: if costs are close, how will you decide between multiple solutions?
 ## Solution
 Using networkx, matplotlib
 
-* [day18.py](./day18.py)
+* [day18.py](./day18.py) cost = 89
+* [day18b.py](./day18b.py) cost = 82 using https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.approximation.steinertree.steiner_tree.html
 
 ## Output
 ```
