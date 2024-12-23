@@ -9,3 +9,6 @@
 * https://www.canva.dev/blog/engineering/the-science-of-routing-print-orders/
 * https://www.aimms.com/stories/
   * https://www.aimms.com/story/draghi-report-strategic-responses-eu-manufacturing-challenges
+* https://www.nextmv.io/blog
+* Interactive Operations Research - https://interactive-or.net/
+* OR-Library by J E Beasley - https://people.brunel.ac.uk/~mastjjb/jeb/info.html 

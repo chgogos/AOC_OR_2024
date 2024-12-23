@@ -50,4 +50,4 @@ Leaves that will be removed: [17]
 total cost at step 3: 89
 ```
 
-![](./MST.png)
+![](./MST89.png)
