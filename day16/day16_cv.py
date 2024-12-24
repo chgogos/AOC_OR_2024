@@ -59,6 +59,7 @@ def model_mip(prob:Problem):
     cols2 = len(prob.links_list)
     cols = cols1 + cols2
 
+    # solve a Set Partition Problem
     x = {}
     for i in range(cols):
         x[i] = solver.BoolVar(f'x_{i}')
@@ -89,7 +90,7 @@ def model_mip(prob:Problem):
 
     status = solver.Solve()
 
-    if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
+    if status in [pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE]:
         print(f'status: {status}')
         print(f'obj={int(solver.Objective().Value()):,}')
         # print(f'time={solver.WallTime():.1f}')
