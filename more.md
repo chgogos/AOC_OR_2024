@@ -12,3 +12,5 @@
 * https://www.nextmv.io/blog
 * Interactive Operations Research - https://interactive-or.net/
 * OR-Library by J E Beasley - https://people.brunel.ac.uk/~mastjjb/jeb/info.html 
+* Job-shop Scheduling - https://optimizizer.com/jobshop.php
+* https://www.noradsanta.org/en/map

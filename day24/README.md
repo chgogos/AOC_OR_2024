@@ -1,35 +1,24 @@
-# Day 21 - for the environment 
+# Day 24 - 
 
 
 ## Description
-Today I'm the 🌱 Environmental Risk Management Officer at EnergyOR, a power plant company.
+🎅 Santa's coming!
 
-📈 The challenge:
+🎄 Santa needs to deliver presents to children all over the world before Christmas morning 🎁.
 
-Our company is expanding its operations, and we need to determine the best locations for 25 facilities (e.g., power plants or waste treatment centers).
+However, there are some challenges:
 
-However, these facilities emit noise 🔊, heat 🌡️, or pollutants 🌫️, so their placement requires careful planning.
+Each child has a specific time window when they are available to receive their gift (maybe they're asleep 😴 or out playing 🛝).
+Santa's sleighs have a capacity limit 🛷, and given the massive scale of this operation, he must decide how many helpers (sleigh drivers) are needed to complete all the deliveries efficiently.
+Here's the catch:
 
-🚧 Key considerations:
+🦌 The reindeers travel at 1000 km/h, and they go in a straight line 🛤️ from one house to another.
 
-We must strategically locate these facilities as far as possible from:
+🎯 The goal?
 
-🏫 Schools
-🏡 Residential areas
-🌳 Other sensitive zones
-⚠️ The risks of poor facility placement:
-
-Community Resistance: Complaints, protests, and legal actions ⚖️
-Environmental Impact: Health risks and reduced quality of life 🌍
-Operational Challenges: Costly retrofits or relocations due to public outcry 💸
-🗺️ What we know:
-
-A list of sensitive entities affected by power plant placement 🏠🏫
-A list of potential facility locations 📍
-A distance matrix 📏 among these points
-🎯 Our goal is to maximize the sum of the minimum distances between that set of 25 facilities and the entities.
-
-Can you help me solve this problem? 🧩
+Determine how many sleigh drivers Santa needs.
+Plan the sequence of deliveries for each driver to ensure every child gets their gift on time! 🕰️
+Can you help Santa save Christmas? 🎅✨
 
 ## Problem's data
 
