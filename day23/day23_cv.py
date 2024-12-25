@@ -31,12 +31,14 @@ def model_cpsat(prob:Problem):
 
     model = cp_model.CpModel()
 
+    b = {i: model.NewBoolVar(f'b_{i}')
+            for i in range(prob.products)}
+
+    model.add(sum(b[i] for i in range(prob.products)) == prob.select)
+
     x = {(i,j): model.NewBoolVar(f'x_{i}_{j}')
             for i in range(prob.products)
             for j in range(i+1,prob.products)}
-
-    b = {i: model.NewBoolVar(f'b_{i}')
-            for i in range(prob.products)}
 
     model.add(sum(x[i,j]
             for i in range(prob.products)
@@ -46,8 +48,6 @@ def model_cpsat(prob:Problem):
         for j in range(i+1,prob.products):
             model.add(b[i] >= x[i, j])
             model.add(b[j] >= x[i, j])
-
-    model.add(sum(b[i] for i in range(prob.products)) == prob.select)
 
     ub = sum(prob.distance[i][j]
                 for i in range(prob.products)
